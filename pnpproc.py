@@ -64,13 +64,14 @@ class PnpConverter:
         except Exception:
             return False
 
-    def load_csv(self, filename, encoding='utf8', separator=';', fwf=False):
+    def load_csv(self, filename, encoding='utf8', separator=r';|\t'):
         try:
-            if not fwf:
+            try:
                 self.csv = pd.read_csv(filename, sep=separator, engine='python', encoding=encoding)
-            else:
+                self.csv['Comment'] = self.csv['Comment']
+            except Exception:
                 self.csv = pd.read_fwf(filename)
-            self.csv['Comment'] = self.csv['Comment']
+
             return True
         except Exception as e:
             self.last_error = f'Ошибка чтения PNP\n{e}'
@@ -86,7 +87,6 @@ class PnpConverter:
     def export_csv(self, new_name):
         try:
             new_name = f'{self.out_folder}/{new_name}.csv'
-            print(new_name)
             self.csv.to_csv(new_name,
                             sep=';',
                             index=False,
@@ -99,7 +99,7 @@ class PnpConverter:
 
     def fix(self):
         self.csv['Comment'] = self.csv['Comment'].str.replace('"', '')
-        print('    Содержат не латинские буквы:')
+        self.out_text += '    Содержат не латинские буквы:\n'
         self.csv['Translit'] = self.csv['Comment'].apply(check_trans)
         self.csv['Comment'] = self.csv['Comment'].apply(self.trans)
         self.out_text += "\n".join(list(set(self.translit)))
@@ -112,10 +112,11 @@ class PnpConverter:
         :return:
         :param file_path:
         """
+        out_file = Path(file_path).stem
+        self.out_text = f'\nПроект: {out_file}\n'
         if not self.pre_check(file_path):
             return False
-        out_file = Path(file_path).stem
-        self.out_text = f'Проект: {out_file}'
+
         self.fix()
         if not self.export_csv(out_file):
             return False
