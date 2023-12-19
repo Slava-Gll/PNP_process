@@ -1,11 +1,20 @@
 import sys
 import chardet
 from pnpproc import PnpConverter
-from  PySide6.QtCore import Slot
-from PySide6.QtWidgets import QApplication, QWidget, QFileDialog, QPushButton
+from PySide6.QtWidgets import QApplication, QWidget, QFileDialog
+from PySide6.QtGui import QIcon
 from main_widget import Ui_Form
+import os
 
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -15,6 +24,7 @@ class MainWindow(QWidget):
         self.ui.setupUi(self)
         self.ui.pushButton_select_file.clicked.connect(self.choose_file)
         self.filenames = None
+        self.setWindowIcon(QIcon(resource_path('icon.ico')))
         self.ui.listWidget_files.addItem('<< Файлы не выбранны >>')
         self.ui.textEdit_output.append('Готов')
         self.ui.pushButton_process.clicked.connect(self.process_files)
