@@ -71,6 +71,7 @@ class PnpConverter:
                 self.csv['Comment'] = self.csv['Comment']
             except Exception:
                 self.csv = pd.read_fwf(filename)
+                self.csv['Comment'] = self.csv['Comment']
 
             return True
         except Exception as e:

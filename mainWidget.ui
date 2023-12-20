@@ -6,9 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>548</width>
-    <height>492</height>
+    <width>396</width>
+    <height>443</height>
    </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
   </property>
   <property name="windowTitle">
    <string>Преобразователь PnP</string>
@@ -17,20 +20,20 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
-     <width>91</width>
+     <y>30</y>
+     <width>101</width>
      <height>24</height>
     </rect>
    </property>
    <property name="text">
-    <string>Выбрать файл</string>
+    <string>Выбрать файлы</string>
    </property>
   </widget>
   <widget class="QListWidget" name="listWidget_files">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>10</y>
+     <x>120</x>
+     <y>20</y>
      <width>256</width>
      <height>81</height>
     </rect>
@@ -69,24 +72,46 @@
   <widget class="QTextEdit" name="textEdit_output">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>130</y>
-     <width>441</width>
+     <x>120</x>
+     <y>110</y>
+     <width>261</width>
      <height>301</height>
     </rect>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QAbstractScrollArea::AdjustToContents</enum>
+   </property>
+   <property name="lineWrapMode">
+    <enum>QTextEdit::NoWrap</enum>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_process">
    <property name="geometry">
     <rect>
-     <x>260</x>
-     <y>450</y>
-     <width>75</width>
+     <x>10</x>
+     <y>60</y>
+     <width>101</width>
      <height>24</height>
     </rect>
    </property>
    <property name="text">
     <string>Обработать</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>410</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Открывать папку</string>
    </property>
   </widget>
  </widget>

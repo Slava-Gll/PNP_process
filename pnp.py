@@ -16,6 +16,7 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
+
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -25,12 +26,14 @@ class MainWindow(QWidget):
         self.ui.pushButton_select_file.clicked.connect(self.choose_file)
         self.filenames = None
         self.setWindowIcon(QIcon(resource_path('icon.ico')))
-        self.ui.listWidget_files.addItem('<< Файлы не выбранны >>')
-        self.ui.textEdit_output.append('Готов')
+        self.ui.listWidget_files.addItem('<< Файлы не выбраны >>')
+        self.ui.textEdit_output.append('Готов к работе')
         self.ui.pushButton_process.clicked.connect(self.process_files)
         self.ui.pushButton_process.setDisabled(True)
+        #self.dropEvent(True)
 
     def process_files(self):
+        self.ui.textEdit_output.setText('Начало обработки...')
         for file in self.filenames:
             with open(file, "rb") as fi:
                 pnp_converter.encoding = chardet.detect(fi.read())['encoding']
@@ -42,10 +45,10 @@ class MainWindow(QWidget):
     def choose_file(self):
         print('start')
         dg = QFileDialog.getOpenFileNames(self,
-                                         caption='Выберите файл PnP',
-                                         dir='C:\\',
-                                         filter="Файлы PnP (*.txt *.csv *.tsv);;Любые файлы (*)"
-                                         )[0]
+                                          caption='Выберите файл PnP',
+                                          dir='C:\\',
+                                          filter="Файлы PnP (*.txt *.csv *.tsv);;Любые файлы (*)"
+                                          )[0]
         self.ui.listWidget_files.clear()
         if dg:
             self.filenames = dg
@@ -56,6 +59,7 @@ class MainWindow(QWidget):
         self.filenames = None
         self.ui.listWidget_files.addItem('<< Файлы не выбранны >>')
         self.ui.pushButton_process.setDisabled(True)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
