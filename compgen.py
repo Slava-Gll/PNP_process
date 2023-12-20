@@ -220,7 +220,7 @@ class GenComp:
             return False
 
     def process(self, open_when_done=True):
-        self.out_text = 'Начало работы'
+        self.out_text = ''
         if not self.get_library():
             return False
         self.filter_library()

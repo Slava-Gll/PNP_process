@@ -92,7 +92,7 @@ class MainWindow(QWidget):
     def generate_comp(self):
         self.ui.textEdit_output_comp.setText('Начало обработки...')
         status = component_generator.process(open_when_done=self.ui.checkBox_open_folder.checkState() == Qt.Checked)
-        self.ui.textEdit_output_comp.append(pnp_converter.out_text)
+        self.ui.textEdit_output_comp.append(component_generator.out_text)
         if status:
             self.ui.textEdit_output_comp.append('\nГотово')
         else:
