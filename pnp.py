@@ -3,6 +3,7 @@ import chardet
 from pnpproc import PnpConverter
 from PySide6.QtWidgets import QApplication, QWidget, QFileDialog
 from PySide6.QtGui import QIcon
+from PySide6.QtCore import QSettings, Qt
 from main_widget import Ui_Form
 import os
 
@@ -30,17 +31,37 @@ class MainWindow(QWidget):
         self.ui.textEdit_output.append('Готов к работе')
         self.ui.pushButton_process.clicked.connect(self.process_files)
         self.ui.pushButton_process.setDisabled(True)
-        #self.dropEvent(True)
+        self.settings = QSettings("SLG", "PNP")
+        # self.dropEvent(True)
+        self.load_settings()
+
+    def closeEvent(self, event):
+        self.save_settings()
+        super().closeEvent(event)
+
+    def save_settings(self):
+        self.settings.setValue("user/open_when_done", self.ui.checkBox_open_folder.checkState())
+
+    def load_settings(self):
+        if 'user' in self.settings.childGroups():
+            val = self.settings.value('user/open_when_done')
+            self.ui.checkBox_open_folder.setCheckState(val)
 
     def process_files(self):
         self.ui.textEdit_output.setText('Начало обработки...')
+        statuses = []
         for file in self.filenames:
             with open(file, "rb") as fi:
                 pnp_converter.encoding = chardet.detect(fi.read())['encoding']
-            status = pnp_converter.convert(file)
+            status = pnp_converter.convert(file, open_when_done=self.ui.checkBox_open_folder.checkState() == Qt.Checked)
+            statuses.append(status)
             self.ui.textEdit_output.append(pnp_converter.out_text)
             if not status:
                 self.ui.textEdit_output.append(f'   Ошибка: {pnp_converter.last_error}')
+        if all(statuses):
+            self.ui.textEdit_output.append('\nГотово')
+        else:
+            self.ui.textEdit_output.append('\nГотово, есть ошибки')
 
     def choose_file(self):
         print('start')

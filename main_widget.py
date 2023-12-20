@@ -23,7 +23,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(396, 423)
+        Form.resize(396, 443)
         Form.setAcceptDrops(True)
         self.pushButton_select_file = QPushButton(Form)
         self.pushButton_select_file.setObjectName(u"pushButton_select_file")
@@ -51,9 +51,10 @@ class Ui_Form(object):
         self.pushButton_process = QPushButton(Form)
         self.pushButton_process.setObjectName(u"pushButton_process")
         self.pushButton_process.setGeometry(QRect(10, 60, 101, 24))
-        self.checkBox = QCheckBox(Form)
-        self.checkBox.setObjectName(u"checkBox")
-        self.checkBox.setGeometry(QRect(20, 110, 76, 20))
+        self.checkBox_open_folder = QCheckBox(Form)
+        self.checkBox_open_folder.setObjectName(u"checkBox_open_folder")
+        self.checkBox_open_folder.setGeometry(QRect(270, 410, 121, 31))
+        self.checkBox_open_folder.setChecked(True)
 
         self.retranslateUi(Form)
 
@@ -64,6 +65,6 @@ class Ui_Form(object):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"\u041f\u0440\u0435\u043e\u0431\u0440\u0430\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c PnP", None))
         self.pushButton_select_file.setText(QCoreApplication.translate("Form", u"\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u0444\u0430\u0439\u043b\u044b", None))
         self.pushButton_process.setText(QCoreApplication.translate("Form", u"\u041e\u0431\u0440\u0430\u0431\u043e\u0442\u0430\u0442\u044c", None))
-        self.checkBox.setText(QCoreApplication.translate("Form", u"CheckBox", None))
+        self.checkBox_open_folder.setText(QCoreApplication.translate("Form", u"\u041e\u0442\u043a\u0440\u044b\u0432\u0430\u0442\u044c \u043f\u0430\u043f\u043a\u0443", None))
     # retranslateUi
 
