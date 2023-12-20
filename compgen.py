@@ -1,7 +1,7 @@
 import os
 import re
 from os.path import exists, realpath
-
+import json
 import pandas as pd
 import pyodbc
 from smbclient import register_session
@@ -28,10 +28,22 @@ REGEXP_VALUE_L = re.compile(r'\AL-.+-.+nH|n[^\n]*')
 REGEXP_VALUE_F_LFCN = re.compile(r'\d{2,4}[+]$')
 REGEXP_IS_ACTIVE = re.compile(r'\A(?![DXTQ])')
 
-mdb_delete = r"\\smtdev\STC_DB_SMT\CarrierDB.mdb"
-smbu_delete = "Администратор"
-smbp_delete = "R&D_srv"
+json_config_file = 'conf.json'
 SOBRANO_LOC_DEFAULT = 'SOBRANO_V_STANOK'
+
+CONF_DICT = {
+    "MDB_PATH": r"",
+    "SMB_USERNAME": "",
+    "SMB_PASSWORD": ""
+}
+
+
+def get_config():
+    if not os.path.exists(json_config_file):
+        with open(json_config_file, 'w', encoding='utf8') as outfile:
+            json.dump(CONF_DICT, outfile, ensure_ascii=False, indent=4)
+    with open(json_config_file, 'r', encoding='utf8') as openfile:
+        return json.load(openfile)
 
 
 def extract_package(row):
@@ -132,11 +144,12 @@ def check_trans(txt):
 
 
 class GenComp:
-    def __init__(self, mdb_path=mdb_delete, smb_username=smbu_delete, smb_password=smbp_delete, encoding='utf8',
+    def __init__(self, encoding='utf8',
                  sobrano_loc=SOBRANO_LOC_DEFAULT, include_active=True, out_folder='READY'):
-        self.mdb_path = mdb_path
-        self.smb_username = smb_username
-        self.smb_password = smb_password
+        config = get_config()
+        self.mdb_path = config["MDB_PATH"]
+        self.smb_username = config['SMB_USERNAME']
+        self.smb_password = config['SMB_PASSWORD']
         self.encoding = encoding
         self.sobrano_loc = sobrano_loc
         self.include_active = include_active
@@ -164,6 +177,7 @@ class GenComp:
             return True
         except Exception as e:
             self.last_error = f'Не удалось подключиться к БД SMT\n{e}'
+            print('lol')
             return False
 
     def filter_library(self):

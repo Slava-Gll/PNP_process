@@ -96,7 +96,7 @@ class MainWindow(QWidget):
         if status:
             self.ui.textEdit_output_comp.append('\nГотово')
         else:
-            self.ui.textEdit_output_comp.append(pnp_converter.last_error)
+            self.ui.textEdit_output_comp.append(component_generator.last_error)
             self.ui.textEdit_output_comp.append('\nГотово, есть ошибки')
 
 if __name__ == '__main__':
