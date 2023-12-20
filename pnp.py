@@ -1,6 +1,7 @@
 import sys
 import chardet
 from pnpproc import PnpConverter
+from compgen import GenComp
 from PySide6.QtWidgets import QApplication, QWidget, QFileDialog
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import QSettings, Qt
@@ -29,8 +30,10 @@ class MainWindow(QWidget):
         self.setWindowIcon(QIcon(resource_path('icon.ico')))
         self.ui.listWidget_files.addItem('<< Файлы не выбраны >>')
         self.ui.textEdit_output.append('Готов к работе')
+        self.ui.textEdit_output_comp.append('Готов к работе')
         self.ui.pushButton_process.clicked.connect(self.process_files)
         self.ui.pushButton_process.setDisabled(True)
+        self.ui.pushButton_generate_components.clicked.connect(self.generate_comp)
         self.settings = QSettings("SLG", "PNP")
         # self.dropEvent(True)
         self.load_settings()
@@ -86,12 +89,21 @@ class MainWindow(QWidget):
         self.ui.listWidget_files.addItem('<< Файлы не выбранны >>')
         self.ui.pushButton_process.setDisabled(True)
 
+    def generate_comp(self):
+        self.ui.textEdit_output_comp.setText('Начало обработки...')
+        status = component_generator.process(open_when_done=self.ui.checkBox_open_folder.checkState() == Qt.Checked)
+        self.ui.textEdit_output_comp.append(pnp_converter.out_text)
+        if status:
+            self.ui.textEdit_output_comp.append('\nГотово')
+        else:
+            self.ui.textEdit_output_comp.append(pnp_converter.last_error)
+            self.ui.textEdit_output_comp.append('\nГотово, есть ошибки')
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    pnp_converter = PnpConverter('/test_ready')
+    pnp_converter = PnpConverter(out_folder='/ready')
     pnp_converter.update_folder()
-
+    component_generator = GenComp(out_folder='/ready')
     window = MainWindow()
     window.show()
 
