@@ -41,11 +41,15 @@ class MainWindow(QWidget):
 
     def save_settings(self):
         self.settings.setValue("user/open_when_done", self.ui.checkBox_open_folder.checkState())
+        self.settings.setValue("user/out_path", self.out_folder)
 
     def load_settings(self):
         if 'user' in self.settings.childGroups():
             val = self.settings.value('user/open_when_done')
             self.ui.checkBox_open_folder.setCheckState(val)
+            self.out_folder = self.settings.value('user/out_path')
+        else:
+            self.out_folder = '%UserProfile%\\Desktop\\'
 
     def process_files(self):
         self.ui.textEdit_output.setText('Начало обработки...')
@@ -64,15 +68,16 @@ class MainWindow(QWidget):
             self.ui.textEdit_output.append('\nГотово, есть ошибки')
 
     def choose_file(self):
-        print('start')
         dg = QFileDialog.getOpenFileNames(self,
                                           caption='Выберите файл PnP',
-                                          dir='C:\\',
+                                          dir=self.out_folder,
                                           filter="Файлы PnP (*.txt *.csv *.tsv);;Любые файлы (*)"
                                           )[0]
         self.ui.listWidget_files.clear()
         if dg:
             self.filenames = dg
+            self.out_folder = '\\'.join(dg[0].split('/')[:-1])
+            print(self.out_folder)
             names = [x.split('/')[-1] for x in dg]
             self.ui.listWidget_files.addItems(names)
             self.ui.pushButton_process.setDisabled(False)
