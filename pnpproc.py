@@ -36,7 +36,21 @@ class PnpConverter:
         self.translit = []
         self.out_text = ''
         self.encoding = 'utf8'
-
+    def convert_utf8(self, filename):
+        try:
+            with open(filename, 'r+', encoding='utf8') as f:
+                f.readlines()
+            return True
+        except Exception:
+            try:
+                with open(filename, 'r', encoding='cp1251') as f:
+                    lines = f.readlines()
+                with open(filename, 'w', encoding='utf8') as f:
+                    f.writelines(lines)
+                return True
+            except Exception as e:
+                self.last_error = e
+                return False
     def pre_check(self, filename):
         """
         Checks for all startup conditions
@@ -46,8 +60,11 @@ class PnpConverter:
         if not check_file(filename):
             self.last_error = 'Ошибка чтения файла'
             return False
-        if not self.load_csv(filename, encoding=self.encoding):
+        if not self.convert_utf8(filename):
             return False
+        if not self.load_csv(filename, encoding='uft8'):
+            if not self.load_csv(filename, encoding='cp1251'):
+                return False
         return True
     def update_folder(self):
         """

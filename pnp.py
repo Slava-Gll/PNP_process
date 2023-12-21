@@ -1,5 +1,4 @@
 import sys
-import chardet
 from pnpproc import PnpConverter
 from compgen import GenComp
 from PySide6.QtWidgets import QApplication, QWidget, QFileDialog
@@ -58,8 +57,6 @@ class MainWindow(QWidget):
         self.ui.textEdit_output.setText('Начало обработки...')
         statuses = []
         for file in self.filenames:
-            with open(file, "rb") as fi:
-                pnp_converter.encoding = chardet.detect(fi.read())['encoding']
             status = pnp_converter.convert(file, open_when_done=self.ui.checkBox_open_folder.checkState() == Qt.Checked)
             statuses.append(status)
             self.ui.textEdit_output.append(pnp_converter.out_text)
