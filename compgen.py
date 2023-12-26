@@ -8,6 +8,7 @@ from smbclient import register_session
 from transliterate import translit
 
 packs_l = {'L-0402': '0402_C',
+           'L-ATC-0402': '0402_C',
            'L-LQW15': '0402_C',
            'L-LQG15': '0402_C',
            'L-LQW18': '0603_C',
