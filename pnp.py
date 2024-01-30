@@ -1,7 +1,7 @@
 import sys
 from pnpproc import PnpConverter
 from compgen import GenComp
-from PySide6.QtWidgets import QApplication, QWidget, QFileDialog
+from PySide6.QtWidgets import QApplication, QWidget, QFileDialog, QInputDialog, QLineEdit
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import QSettings, Qt
 from main_widget import Ui_Form
@@ -58,10 +58,18 @@ class MainWindow(QWidget):
         statuses = []
         for file in self.filenames:
             status = pnp_converter.convert(file, open_when_done=self.ui.checkBox_open_folder.checkState() == Qt.Checked)
+            if not status and pnp_converter.last_error_comment:
+                text, ok = QInputDialog.getText(self, "Столбец Comment не найден",
+                                                f"Переопределить название столбца Comment\nпервая строчка:\n{pnp_converter.first_line}")
+                if ok and text:
+                    status = pnp_converter.convert(file,
+                                                   open_when_done=self.ui.checkBox_open_folder.checkState() == Qt.Checked,
+                                                   csv_comment_field=text)
             statuses.append(status)
             self.ui.textEdit_output.append(pnp_converter.out_text)
             if not status:
                 self.ui.textEdit_output.append(f'   Ошибка: {pnp_converter.last_error}')
+
         if all(statuses):
             self.ui.textEdit_output.append('\nГотово')
         else:
@@ -95,6 +103,7 @@ class MainWindow(QWidget):
         else:
             self.ui.textEdit_output_comp.append(component_generator.last_error)
             self.ui.textEdit_output_comp.append('\nГотово, есть ошибки')
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

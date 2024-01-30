@@ -32,6 +32,9 @@ class PnpConverter:
     def __init__(self, out_folder='READY'):
         self.out_folder = out_folder
         self.last_error = ''
+        self.last_error_comment = False
+        self.csv_comment_field = ''
+        self.first_line = ''
         self.csv = None
         self.translit = []
         self.out_text = ''
@@ -39,7 +42,7 @@ class PnpConverter:
     def convert_utf8(self, filename):
         try:
             with open(filename, 'r+', encoding='utf8') as f:
-                f.readlines()
+                self.first_line = f.readlines()[0]
             return True
         except Exception:
             try:
@@ -47,6 +50,7 @@ class PnpConverter:
                     lines = f.readlines()
                 with open(filename, 'w', encoding='utf8') as f:
                     f.writelines(lines)
+                self.first_line = lines[0]
                 return True
             except Exception as e:
                 self.last_error = e
@@ -62,7 +66,7 @@ class PnpConverter:
             return False
         if not self.convert_utf8(filename):
             return False
-        if not self.load_csv(filename, encoding='uft8'):
+        if not self.load_csv(filename, encoding='utf8'):
             if not self.load_csv(filename, encoding='cp1251'):
                 return False
         return True
@@ -83,16 +87,20 @@ class PnpConverter:
 
     def load_csv(self, filename, encoding='utf8', separator=r';|\t'):
         try:
+            self.last_error_comment = False
             try:
                 self.csv = pd.read_csv(filename, sep=separator, engine='python', encoding=encoding)
-                self.csv['Comment'] = self.csv['Comment']
-            except Exception:
+                self.csv.rename(columns={self.csv_comment_field: "Comment"}, inplace=True)
+                self.csv['Comment']=self.csv['Comment']
+            except Exception as e:
                 self.csv = pd.read_fwf(filename)
+                self.csv.rename(columns={self.csv_comment_field: "Comment"}, inplace=True)
                 self.csv['Comment'] = self.csv['Comment']
 
             return True
         except Exception as e:
-            self.last_error = f'Ошибка чтения PNP\n{e}'
+            self.last_error = f'Ошибка чтения PNP\nпроверьте формат файла\n{e}'
+            self.last_error_comment = True
             return False
 
     def trans(self, txt):
@@ -121,10 +129,10 @@ class PnpConverter:
         self.csv['Translit'] = self.csv['Comment'].apply(check_trans)
         self.csv['Comment'] = self.csv['Comment'].apply(self.trans)
         self.out_text += "\n".join(list(set(self.translit)))
-        self.csv.drop_duplicates(subset=['Designator'], keep='first', inplace=True)
         self.csv['Comment'] = self.csv['Comment'].str.replace(' ', '-')
 
-    def convert(self, file_path, open_when_done=True):
+    def convert(self, file_path, open_when_done=True, csv_comment_field = 'comment'):
+        self.csv_comment_field = csv_comment_field
         """
 
         :return:
@@ -132,6 +140,7 @@ class PnpConverter:
         """
         out_file = Path(file_path).stem
         self.out_text = f'\nПроект: {out_file}\n'
+        self.translit = []
         if not self.pre_check(file_path):
             return False
 
