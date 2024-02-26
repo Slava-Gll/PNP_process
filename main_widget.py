@@ -16,14 +16,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QCheckBox, QFrame,
-    QListView, QListWidget, QListWidgetItem, QPushButton,
-    QSizePolicy, QTabWidget, QTextEdit, QWidget)
+    QHBoxLayout, QListView, QListWidget, QListWidgetItem,
+    QPushButton, QSizePolicy, QTabWidget, QTextEdit,
+    QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(473, 555)
+        Form.resize(472, 555)
         Form.setAcceptDrops(True)
         self.tabWidget = QTabWidget(Form)
         self.tabWidget.setObjectName(u"tabWidget")
@@ -76,10 +77,32 @@ class Ui_Form(object):
         self.textEdit_output_comp.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.textEdit_output_comp.setLineWrapMode(QTextEdit.NoWrap)
         self.tabWidget.addTab(self.tab_4, "")
+        self.tab_debug = QWidget()
+        self.tab_debug.setObjectName(u"tab_debug")
+        self.horizontalLayoutWidget = QWidget(self.tab_debug)
+        self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
+        self.horizontalLayoutWidget.setGeometry(QRect(9, 69, 451, 451))
+        self.horizontalLayout = QHBoxLayout(self.horizontalLayoutWidget)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.textEdit_stdout = QTextEdit(self.horizontalLayoutWidget)
+        self.textEdit_stdout.setObjectName(u"textEdit_stdout")
+
+        self.horizontalLayout.addWidget(self.textEdit_stdout)
+
+        self.textEdit_stderr = QTextEdit(self.horizontalLayoutWidget)
+        self.textEdit_stderr.setObjectName(u"textEdit_stderr")
+
+        self.horizontalLayout.addWidget(self.textEdit_stderr)
+
+        self.tabWidget.addTab(self.tab_debug, "")
+        self.pushButton_debug = QPushButton(Form)
+        self.pushButton_debug.setObjectName(u"pushButton_debug")
+        self.pushButton_debug.setGeometry(QRect(520, 30, 75, 24))
 
         self.retranslateUi(Form)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(Form)
@@ -93,5 +116,7 @@ class Ui_Form(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("Form", u"PnP", None))
         self.pushButton_generate_components.setText(QCoreApplication.translate("Form", u"\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u043a\u043e\u043c\u043f\u043e\u043d\u0435\u043d\u0442\u044b", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("Form", u"\u041a\u043e\u043c\u043f\u043e\u043d\u0435\u043d\u0442\u044b", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_debug), QCoreApplication.translate("Form", u"DEBUG", None))
+        self.pushButton_debug.setText(QCoreApplication.translate("Form", u"DEBUG", None))
     # retranslateUi
 

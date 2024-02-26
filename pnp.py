@@ -6,6 +6,7 @@ from PySide6.QtGui import QIcon
 from PySide6.QtCore import QSettings, Qt
 from main_widget import Ui_Form
 import os
+from io import StringIO
 
 
 def resource_path(relative_path):
@@ -33,10 +34,23 @@ class MainWindow(QWidget):
         self.ui.pushButton_process.clicked.connect(self.process_files)
         self.ui.pushButton_process.setDisabled(True)
         self.ui.pushButton_generate_components.clicked.connect(self.generate_comp)
+        self.ui.pushButton_debug.clicked.connect(self.open_debug)
         self.settings = QSettings("SLG", "PNP")
         # self.dropEvent(True)
         self.load_settings()
+        self.ui.tabWidget.setStyleSheet(
+            "QTabBar::tab::disabled {width: 0; height: 0; margin: 0; padding: 0; border: none;} ")
+        self.ui.tabWidget.setTabEnabled(2, False)
+        self.ui.tabWidget.setCurrentIndex(0)
+        sys.stdout = self.buf_stdout = StringIO()
+        sys.stderr = self.buf_stderr = StringIO()
 
+    def open_debug(self):
+        self.ui.tabWidget.setTabEnabled(2, True)
+        self.ui.tabWidget.setCurrentIndex(2)
+
+        self.ui.textEdit_stdout.setText(self.buf_stdout.getvalue())
+        self.ui.textEdit_stderr.setText(self.buf_stderr.getvalue())
     def closeEvent(self, event):
         self.save_settings()
         super().closeEvent(event)

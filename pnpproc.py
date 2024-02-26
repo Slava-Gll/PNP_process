@@ -85,7 +85,7 @@ class PnpConverter:
         except Exception:
             return False
 
-    def load_csv(self, filename, encoding='utf8', separator=r';|\t'):
+    def load_csv(self, filename, encoding='utf8', separator=r';|\t|,'):
         try:
             self.last_error_comment = False
             try:

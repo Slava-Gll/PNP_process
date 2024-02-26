@@ -33,7 +33,8 @@ json_config_file = 'conf.json'
 SOBRANO_LOC_DEFAULT = 'SOBRANO_V_STANOK'
 
 CONF_DICT = {
-    "MDB_PATH": r"",
+    "MDB_PATH": "",
+    "HOST": "",
     "SMB_USERNAME": "",
     "SMB_PASSWORD": ""
 }
@@ -149,6 +150,7 @@ class GenComp:
                  sobrano_loc=SOBRANO_LOC_DEFAULT, include_active=True, out_folder='READY'):
         config = get_config()
         self.mdb_path = config["MDB_PATH"]
+        self.host = config["HOST"]
         self.smb_username = config['SMB_USERNAME']
         self.smb_password = config['SMB_PASSWORD']
         self.encoding = encoding
@@ -170,10 +172,11 @@ class GenComp:
 
     def get_library(self):
         try:
-            register_session("smtdev", username=self.smb_username, password=self.smb_password)
+            register_session(self.host, username=self.smb_username, password=self.smb_password)
             driver = '{Microsoft Access Driver (*.mdb, *.accdb)}'
             cnxn = pyodbc.connect(f'Driver={driver};DBQ={self.mdb_path}')
             self.library = pd.read_sql("SELECT CarrierId, ComponentName, Location FROM CarrierTable", cnxn)
+            cnxn.close()
             self.library = self.library[['CarrierId', 'ComponentName', 'Location']]
             return True
         except Exception as e:
@@ -194,7 +197,7 @@ class GenComp:
         library_sobrano['Comment'] = library_sobrano['Comment'].apply(self.trans)
         self.out_text += '    Содержат не латинские буквы:\n'
         self.out_text += "\n".join(list(set(self.translit)))
-        self.translit = ''
+        self.translit = []
         library_sobrano['Comment'] = library_sobrano['Comment'].str.replace(' ', '-')
         library_sobrano['package'] = library_sobrano.apply(extract_package, axis=1)
         library_sobrano['value'] = library_sobrano.apply(extract_value, axis=1)
