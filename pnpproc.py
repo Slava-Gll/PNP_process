@@ -89,11 +89,11 @@ class PnpConverter:
         try:
             self.last_error_comment = False
             try:
-                self.csv = pd.read_csv(filename, sep=separator, engine='python', encoding=encoding)
+                self.csv = pd.read_csv(filename, sep=separator, dtype=str, engine='python', encoding=encoding)
                 self.csv.rename(columns={self.csv_comment_field: "Comment"}, inplace=True)
                 self.csv['Comment']=self.csv['Comment']
             except Exception as e:
-                self.csv = pd.read_fwf(filename)
+                self.csv = pd.read_fwf(filename, dtype=str)
                 self.csv.rename(columns={self.csv_comment_field: "Comment"}, inplace=True)
                 self.csv['Comment'] = self.csv['Comment']
 
@@ -124,6 +124,7 @@ class PnpConverter:
             return False
 
     def fix(self):
+        self.csv.info()
         self.csv['Comment'] = self.csv['Comment'].str.replace('"', '')
         self.out_text += '    Содержат не латинские буквы:\n'
         self.csv['Translit'] = self.csv['Comment'].apply(check_trans)
